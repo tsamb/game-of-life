@@ -1,7 +1,6 @@
-class Life
-  attr_reader :board
-  attr_accessor :cycles
+require_relative 'cell'
 
+class Life
   BOARD_SIZE = 38
   TICKS_PER_SECOND = 10
 
@@ -12,25 +11,40 @@ class Life
   end
 
   def life_cycle
-    clear_screen
     display_while_running
-    board.each_with_index do |row, row_i|
-      row.each_with_index do |cell, col_i|
-        neighbors = num_of_neighbors(row_i, col_i, cell)
-        case neighbors
-        when 0..1
-          cell.next_status = :dead
-        when 2
-          cell.next_status = cell.alive? ? :alive : :dead
-        when 3
-          cell.next_status = :alive
-        when 4..8
-          cell.next_status = :dead
-        end
+    each_cell_with_index do |row, row_i, cell, col_i|
+      case num_of_neighbors(row_i, col_i, cell)
+      when 0..1
+        cell.next_status = :dead
+      when 2
+        cell.next_status = cell.alive? ? :alive : :dead
+      when 3
+        cell.next_status = :alive
+      when 4..8
+        cell.next_status = :dead
       end
     end
     update_all_cells
     self.cycles += 1
+  end
+
+  protected
+
+  attr_accessor :cycles
+
+  private
+
+  attr_reader :board
+
+  BOARD_TOP = "__" * BOARD_SIZE + "__\n"
+  BOARD_BOTTOM = "¯¯" * BOARD_SIZE + "¯¯\n"
+
+  def each_cell_with_index
+    board.each_with_index do |row, row_i|
+      row.each_with_index do |cell, col_i|
+        yield(row, row_i, cell, col_i)
+      end
+    end
   end
 
   def life_count
@@ -66,43 +80,9 @@ class Life
   end
 
   def to_s
-    board_string = "__" * BOARD_SIZE + "__\n"
-    board_string << board.map { |row| "|#{row.map { |cell| "#{cell}" }.join("")}|\n" }.join("")
-    board_string << "¯¯" * BOARD_SIZE + "¯¯\n"
-  end
-end
-
-class Cell
-  CHANCE_OF_LIFE = 25
-
-  attr_accessor :status, :next_status
-
-  def initialize(args = {})
-    @status = args[:status] || random_status
-    @next_status = nil
-  end
-
-  def random_status
-    roll = rand(100)
-    roll < CHANCE_OF_LIFE ? :alive : :dead
-  end
-
-  def update_status
-    self.status = next_status
-    self.next_status = nil
-    self
-  end
-
-  def alive?
-    status == :alive
-  end
-
-  def dead?
-    status == :dead
-  end
-
-  def to_s
-    status == :alive ? "██" : "  "
+    BOARD_TOP +
+    board.map { |row| "|#{row.map { |cell| "#{cell}" }.join("")}|\n" }.join("") +
+    BOARD_BOTTOM
   end
 end
 
