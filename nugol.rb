@@ -1,5 +1,4 @@
 require 'set'
-require 'pry'
 
 class Life
   def initialize(state)
@@ -58,15 +57,18 @@ class Life
     @live_cells = next_gen(@live_cells)
   end
 
-  VIEWPORT_SIZE = 10
+  VIEWPORT_SIZE = 30
+  CELL_ICON = "█"
 
   def to_s
     board = Array.new(VIEWPORT_SIZE) { Array.new(VIEWPORT_SIZE) { "." } }
     @live_cells.each do |y, x|
       next if y >= VIEWPORT_SIZE || x >= VIEWPORT_SIZE || y < 0 || x < 0
-      board[y][x] = "x"
+      board[y][x] = CELL_ICON
     end
-    board.map { |row| "#{row.map { |cell| "#{cell}" }.join("")}\n" }.join("")
+    "__" * VIEWPORT_SIZE + "_\n" +
+    board.map { |row| "|#{row.map { |cell| "#{cell}" }.join(" ")}|\n" }.join("") +
+    "¯¯" * VIEWPORT_SIZE + "¯\n"
   end
 end
 
@@ -77,23 +79,35 @@ xxx..
 .....
 EOS
 
-life = Life.new(initial_state_glider)
+glider_life = Life.new(initial_state_glider)
 
-
+if ARGV[0] == "-display"
+  loop do
+    print "\e[2J"
+    print "\e[H"
+    puts glider_life
+    sleep 1.0/10
+    glider_life.evolve
+  end
+end
 
 p "Tests"
 p "-----"
 
-test_state = <<~EOS
+still_life = <<~EOS
 .....
 .xx..
 .xx..
 .....
 EOS
-life = Life.new(test_state)
+
+life = Life.new(still_life)
 live_cells = life.instance_variable_get(:@live_cells)
 
-p "#neighbors takes a coordinate pair and returns the neighboring coordinates"
+p "#initialize converts x chars in a string input into a set of coordinate pairs"
+p life.instance_variable_get(:@live_cells) == Set.new([[1,1],[1,2],[2,1],[2,2]])
+
+p "#neighboring_coords takes a coordinate pair and returns all neighboring coordinates"
 p life.neighboring_coords([0,0]) == Set.new([[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]])
 p life.neighboring_coords([5,5]) == Set.new([[4, 4], [4, 5], [4, 6], [5, 4], [5, 6], [6, 4], [6, 5], [6, 6]])
 
@@ -104,3 +118,7 @@ p "#neighbor_count counts a coordinate pair's live neighbors"
 p life.neighbor_count([1,1], live_cells) == 3
 p life.neighbor_count([0,0], live_cells) == 1
 p life.neighbor_count([4,4], live_cells) == 0
+
+p "#next_gen returns a new set based on the rules"
+p life.next_gen(live_cells) == Set.new([[1,1],[1,2],[2,1],[2,2]])
+p glider_life.next_gen(glider_life.instance_variable_get(:@live_cells)) == Set.new([[1, 2], [2, 1], [2, 2], [1, 0], [3, 1]])
