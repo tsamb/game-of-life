@@ -81,7 +81,7 @@ EOS
 
 glider_life = Life.new(initial_state_glider)
 
-if ARGV[0] == "-display"
+if ARGV[0] == "-display" || "-d"
   loop do
     print "\e[2J"
     print "\e[H"
