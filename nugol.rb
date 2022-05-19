@@ -55,6 +55,7 @@ module LifeRunner
       print "\e[H"
       StdoutRenderer.render(state)
       puts "Generation #{cycle += 1}"
+      puts "#{state.size} live cells"
       sleep 1.0/10
       state = life.next_gen(state)
     end
