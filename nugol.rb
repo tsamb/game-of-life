@@ -1,9 +1,6 @@
 require 'set'
 
 class Life
-  VIEWPORT_SIZE = 30
-  STDOUT_CELL_ICON = "█"
-
   def next_gen(live_cells)
     live_cell_evolution = live_cells.reduce(Set.new) do |set, cell|
       case neighbor_count(cell, live_cells)
@@ -25,18 +22,6 @@ class Life
         set
       end
     end
-  end
-
-  def render(live_cells)
-    board = Array.new(VIEWPORT_SIZE) { Array.new(VIEWPORT_SIZE) { "." } }
-    live_cells.each do |y, x|
-      next if y >= VIEWPORT_SIZE || x >= VIEWPORT_SIZE || y < 0 || x < 0
-      board[y][x] = STDOUT_CELL_ICON
-    end
-    "__" * VIEWPORT_SIZE + "_\n" +
-    board.map! { |row| "|#{row.map { |cell| "#{cell}" }.join(" ")}|\n" }.join("") +
-    "¯¯" * VIEWPORT_SIZE + "¯\n"
-    puts board
   end
 
   private
@@ -74,7 +59,7 @@ module LifeRunner
     loop do
       print "\e[2J"
       print "\e[H"
-      life.render(state)
+      StdoutRenderer.render(state)
       puts "Generation #{cycle += 1}"
       sleep 1.0/10
       state = life.next_gen(state)
@@ -95,6 +80,23 @@ module LifeRunner
             end
           end
       end
+    end
+  end
+
+  module StdoutRenderer
+    VIEWPORT_SIZE = 30
+    STDOUT_CELL_ICON = "█"
+
+    def self.render(live_cells)
+      board = Array.new(VIEWPORT_SIZE) { Array.new(VIEWPORT_SIZE) { "." } }
+      live_cells.each do |y, x|
+        next if y >= VIEWPORT_SIZE || x >= VIEWPORT_SIZE || y < 0 || x < 0
+        board[y][x] = STDOUT_CELL_ICON
+      end
+      "__" * VIEWPORT_SIZE + "_\n" +
+      board.map! { |row| "|#{row.map { |cell| "#{cell}" }.join(" ")}|\n" }.join("") +
+      "¯¯" * VIEWPORT_SIZE + "¯\n"
+      puts board
     end
   end
 end
