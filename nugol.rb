@@ -80,18 +80,24 @@ xxx..
 .....
 EOS
 
-glider_life = Life.new
 
-if ARGV[0] == "-display" || ARGV[0] == "-d"
-  state = glider_life.convert_ascii_to_set(glider_life_ascii)
-  loop do
-    print "\e[2J"
-    print "\e[H"
-    glider_life.render(state)
-    sleep 1.0/10
-    state = glider_life.next_gen(state)
+module LifeRunner
+  def self.run(ascii)
+    if ARGV[0] == "-display" || ARGV[0] == "-d"
+      life = Life.new
+      state = life.convert_ascii_to_set(ascii)
+      loop do
+        print "\e[2J"
+        print "\e[H"
+        life.render(state)
+        sleep 1.0/10
+        state = life.next_gen(state)
+      end
+    end
   end
 end
+
+LifeRunner.run(glider_life_ascii)
 
 puts "Tests"
 puts "-----"
@@ -102,10 +108,15 @@ still_life_ascii = <<~EOS
 .xx..
 .....
 EOS
-
 still_life = Life.new
 still_life_gen0_cells = still_life.convert_ascii_to_set(still_life_ascii)
 
+glider_life_ascii = <<~EOS
+.x...
+..x..
+xxx..
+.....
+EOS
 glider_life = Life.new
 glider_life_gen0_cells = glider_life.convert_ascii_to_set(glider_life_ascii)
 
