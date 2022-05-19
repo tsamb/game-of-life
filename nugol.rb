@@ -96,7 +96,7 @@ module LifeRunner
   end
 end
 
-if ARGV[0] == "-display" || ARGV[0] == "-d"
+if ARGV[0] == "--display" || ARGV[0] == "-d"
   file = File.read(ARGV[1]) if ARGV[1]
   LifeRunner.run(file)
 end
