@@ -49,6 +49,8 @@ module LifeRunner
     life = Life.new
     state = default_state
     state = AsciiConverter.create_set(ascii) if ascii
+    puts "Initial state ="
+    p state.to_a
     cycle = 0
     loop do
       print "\e[2J"
