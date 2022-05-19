@@ -100,7 +100,7 @@ module LifeRunner
         board[y][x] = STDOUT_CELL_ICON
       end
       "__" * VIEWPORT_SIZE + "_\n" +
-      board.map! { |row| "|#{row.map { |cell| "#{cell}" }.join(" ")}|\n" }.join("") +
+      board.map! { |row| "#{row.map { |cell| "#{cell}" }.join(" ")}\n" }.join("") +
       "¯¯" * VIEWPORT_SIZE + "¯\n"
       puts board
     end
