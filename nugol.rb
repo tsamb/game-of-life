@@ -2,7 +2,6 @@ require 'set'
 
 class Life
   ASCII_LIVE_CELL_CHAR = "x"
-
   VIEWPORT_SIZE = 30
   STDOUT_CELL_ICON = "█"
 
@@ -82,21 +81,20 @@ xxx..
 EOS
 
 glider_life = Life.new
-# require 'pry'; binding.pry
-if ARGV[0] == "-display"
-  p "argv hit"
-  # state = glider_life.convert_ascii_to_set(glider_life_ascii)
-  # loop do
-  #   print "\e[2J"
-  #   print "\e[H"
-  #   glider_life.render(state)
-  #   sleep 1.0/10
-  #   state = glider_life.next_gen(state)
-  # end
+
+if ARGV[0] == "-display" || ARGV[0] == "-d"
+  state = glider_life.convert_ascii_to_set(glider_life_ascii)
+  loop do
+    print "\e[2J"
+    print "\e[H"
+    glider_life.render(state)
+    sleep 1.0/10
+    state = glider_life.next_gen(state)
+  end
 end
 
-p "Tests"
-p "-----"
+puts "Tests"
+puts "-----"
 
 still_life_ascii = <<~EOS
 .....
@@ -111,6 +109,6 @@ still_life_gen0_cells = still_life.convert_ascii_to_set(still_life_ascii)
 glider_life = Life.new
 glider_life_gen0_cells = glider_life.convert_ascii_to_set(glider_life_ascii)
 
-p "#next_gen returns a new set based on the rules"
-p still_life.next_gen(still_life_gen0_cells) == Set.new([[1,1],[1,2],[2,1],[2,2]])
-p glider_life.next_gen(glider_life_gen0_cells) == Set.new([[1, 2], [2, 1], [2, 2], [1, 0], [3, 1]])
+puts "#next_gen returns a new set based on the rules"
+puts still_life.next_gen(still_life_gen0_cells) == Set.new([[1,1],[1,2],[2,1],[2,2]])
+puts glider_life.next_gen(glider_life_gen0_cells) == Set.new([[1, 2], [2, 1], [2, 2], [1, 0], [3, 1]])
