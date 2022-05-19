@@ -73,31 +73,33 @@ class Life
   end
 end
 
-glider_life_ascii = <<~EOS
-.x...
-..x..
-xxx..
-.....
-EOS
-
-
 module LifeRunner
-  def self.run(ascii)
-    if ARGV[0] == "-display" || ARGV[0] == "-d"
-      life = Life.new
-      state = life.convert_ascii_to_set(ascii)
-      loop do
-        print "\e[2J"
-        print "\e[H"
-        life.render(state)
-        sleep 1.0/10
-        state = life.next_gen(state)
-      end
+  DEFAULT_PATTERN = <<~EOS
+    .x...
+    ..x..
+    xxx..
+    .....
+  EOS
+
+  def self.run(ascii = nil)
+    life = Life.new
+    state = life.convert_ascii_to_set(ascii || DEFAULT_PATTERN)
+    cycle = 0
+    loop do
+      print "\e[2J"
+      print "\e[H"
+      life.render(state)
+      puts "Generation #{cycle += 1}"
+      sleep 1.0/10
+      state = life.next_gen(state)
     end
   end
 end
 
-LifeRunner.run(glider_life_ascii)
+if ARGV[0] == "-display" || ARGV[0] == "-d"
+  file = File.read(ARGV[1]) if ARGV[1]
+  LifeRunner.run(file)
+end
 
 puts "Tests"
 puts "-----"
