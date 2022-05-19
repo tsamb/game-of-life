@@ -45,16 +45,10 @@ class Life
 end
 
 module LifeRunner
-  DEFAULT_PATTERN = <<~EOS
-    .x...
-    ..x..
-    xxx..
-    .....
-  EOS
-
   def self.run(ascii = nil)
     life = Life.new
-    state = AsciiConverter.create_set(ascii || DEFAULT_PATTERN)
+    state = default_state
+    state = AsciiConverter.create_set(ascii) if ascii
     cycle = 0
     loop do
       print "\e[2J"
@@ -63,6 +57,14 @@ module LifeRunner
       puts "Generation #{cycle += 1}"
       sleep 1.0/10
       state = life.next_gen(state)
+    end
+  end
+
+  def self.default_state
+    chance_of_life = 0.5
+    range = 0...30
+    Set.new.tap do |live_cell_set|
+      range.each { |x| range.each { |y| live_cell_set.add([x,y]) if rand < chance_of_life  } }
     end
   end
 
