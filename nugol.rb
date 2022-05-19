@@ -58,7 +58,7 @@ module LifeRunner
       StdoutRenderer.render(state)
       puts "Generation #{cycle += 1}"
       puts "#{state.size} live cells"
-      puts "Min x = #{state.min_by { |x,y| x }}, y = #{state.min_by { |x,y| y }} | Max x = #{state.max_by { |x,y| x }}, y = #{state.max_by { |x,y| y }}"
+      puts "Min x = #{state.min_by { |y,x| x }}, y = #{state.min_by { |y,x| y }} | Max x = #{state.max_by { |y,x| x }}, y = #{state.max_by { |y,x| y }}"
       sleep 1.0/10
       state = life.next_gen(state)
     end
