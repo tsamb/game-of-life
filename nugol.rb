@@ -1,19 +1,24 @@
 require 'set'
 
 class Life
+  ASCII_LIVE_CELL_CHAR = "x"
+
+  VIEWPORT_SIZE = 30
+  STDOUT_CELL_ICON = "█"
+
   def convert_ascii_to_set(ascii)
-    live_cells = Set.new
-    ascii
-      .split("\n")
-      .map { |row| row.split("") }
-      .each_with_index do |row, y|
-        row.each_with_index do |cell, x|
-          live_cells.add([y,x]) if cell == "x"
+    Set.new.tap do |live_cell_set|
+      ascii
+        .split("\n")
+        .map { |row| row.split("") }
+        .each_with_index do |row, y|
+          row.each_with_index do |cell, x|
+            live_cell_set.add([y,x]) if cell == ASCII_LIVE_CELL_CHAR
+          end
         end
-      end
-    live_cells
+    end
   end
-  
+
   def next_gen(live_cells)
     live_cell_evolution = live_cells.reduce(Set.new) do |set, cell|
       case neighbor_count(cell, live_cells)
@@ -36,15 +41,12 @@ class Life
       end
     end
   end
-  
-  VIEWPORT_SIZE = 30
-  CELL_ICON = "█"
 
   def render(live_cells)
     board = Array.new(VIEWPORT_SIZE) { Array.new(VIEWPORT_SIZE) { "." } }
     live_cells.each do |y, x|
       next if y >= VIEWPORT_SIZE || x >= VIEWPORT_SIZE || y < 0 || x < 0
-      board[y][x] = CELL_ICON
+      board[y][x] = STDOUT_CELL_ICON
     end
     "__" * VIEWPORT_SIZE + "_\n" +
     board.map! { |row| "|#{row.map { |cell| "#{cell}" }.join(" ")}|\n" }.join("") +
