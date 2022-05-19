@@ -1,22 +1,8 @@
 require 'set'
 
 class Life
-  ASCII_LIVE_CELL_CHAR = "x"
   VIEWPORT_SIZE = 30
   STDOUT_CELL_ICON = "█"
-
-  def convert_ascii_to_set(ascii)
-    Set.new.tap do |live_cell_set|
-      ascii
-        .split("\n")
-        .map { |row| row.split("") }
-        .each_with_index do |row, y|
-          row.each_with_index do |cell, x|
-            live_cell_set.add([y,x]) if cell == ASCII_LIVE_CELL_CHAR
-          end
-        end
-    end
-  end
 
   def next_gen(live_cells)
     live_cell_evolution = live_cells.reduce(Set.new) do |set, cell|
@@ -83,7 +69,7 @@ module LifeRunner
 
   def self.run(ascii = nil)
     life = Life.new
-    state = life.convert_ascii_to_set(ascii || DEFAULT_PATTERN)
+    state = AsciiConverter.create_set(ascii || DEFAULT_PATTERN)
     cycle = 0
     loop do
       print "\e[2J"
@@ -92,6 +78,23 @@ module LifeRunner
       puts "Generation #{cycle += 1}"
       sleep 1.0/10
       state = life.next_gen(state)
+    end
+  end
+
+  module AsciiConverter
+    ASCII_LIVE_CELL_CHAR = "x"
+
+    def self.create_set(ascii)
+      Set.new.tap do |live_cell_set|
+        ascii
+          .split("\n")
+          .map { |row| row.split("") }
+          .each_with_index do |row, y|
+            row.each_with_index do |cell, x|
+              live_cell_set.add([y,x]) if cell == ASCII_LIVE_CELL_CHAR
+            end
+          end
+      end
     end
   end
 end
@@ -111,7 +114,7 @@ still_life_ascii = <<~EOS
 .....
 EOS
 still_life = Life.new
-still_life_gen0_cells = still_life.convert_ascii_to_set(still_life_ascii)
+still_life_gen0_cells = LifeRunner::AsciiConverter.create_set(still_life_ascii)
 
 glider_life_ascii = <<~EOS
 .x...
@@ -120,7 +123,7 @@ xxx..
 .....
 EOS
 glider_life = Life.new
-glider_life_gen0_cells = glider_life.convert_ascii_to_set(glider_life_ascii)
+glider_life_gen0_cells = LifeRunner::AsciiConverter.create_set(glider_life_ascii)
 
 puts "#next_gen returns a new set based on the rules"
 puts still_life.next_gen(still_life_gen0_cells) == Set.new([[1,1],[1,2],[2,1],[2,2]])
