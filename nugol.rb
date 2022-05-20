@@ -28,8 +28,8 @@ class Life
 
   def neighboring_coords(coords)
     relative_neighbors = [-1,0,1].product([-1,0,1]) - [[0,0]]
-    Set.new(relative_neighbors.map do |neigbor_coords|
-      neigbor_coords.zip(coords).map(&:sum)
+    Set.new(relative_neighbors.map do |neighbor_coords|
+      neighbor_coords.zip(coords).map(&:sum)
     end)
   end
 
