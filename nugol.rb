@@ -127,25 +127,10 @@ end
 
 puts "Tests"
 puts "-----"
-
-still_life_ascii = <<~EOS
-.....
-.xx..
-.xx..
-.....
-EOS
-still_life = Life.new
-still_life_gen0_cells = LifeRunner::AsciiConverter.create_set(still_life_ascii)
-
-glider_life_ascii = <<~EOS
-.x...
-..x..
-xxx..
-.....
-EOS
-glider_life = Life.new
-glider_life_gen0_cells = LifeRunner::AsciiConverter.create_set(glider_life_ascii)
-
 puts "#next_gen returns a new set based on the rules"
-puts still_life.next_gen(still_life_gen0_cells) == Set.new([[1,1],[1,2],[2,1],[2,2]])
-puts glider_life.next_gen(glider_life_gen0_cells) == Set.new([[1, 2], [2, 1], [2, 2], [1, 0], [3, 1]])
+
+still_life = Life.new
+puts still_life.next_gen(Set.new([[1, 1], [1, 2], [2, 1], [2, 2]])) == Set.new([[1,1],[1,2],[2,1],[2,2]])
+
+glider_life = Life.new
+puts glider_life.next_gen(Set.new([[0, 1], [1, 2], [2, 0], [2, 1], [2, 2]])) == Set.new([[1, 2], [2, 1], [2, 2], [1, 0], [3, 1]])
