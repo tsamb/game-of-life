@@ -8,29 +8,32 @@ class Life
   private
 
   def live_cell_evolution(live_cells)
-    live_cells.reduce(Set.new) do |set, cell|
-      case neighbor_count(cell, live_cells)
-      when 0..1
+    evolve(live_cells_with_neighbor_counts(live_cells), 2..3)
+  end
+
+  def dead_cell_evolution(live_cells)
+    evolve(dead_cells_with_neighbor_counts(dead_neighbor_set(live_cells), live_cells), 3..3)
+  end
+
+  def evolve(cells_with_neighbors, alive_within_range)
+    cells_with_neighbors.reduce(Set.new) do |set, cell|
+      case cell[:neighbor_count]
+      when 0..alive_within_range.first-1
         set
-      when 2..3
-        set.add cell
-      when 4..8
+      when alive_within_range
+        set.add cell[:coords]
+      when alive_within_range.last+1..8
         set
       end
     end
   end
 
-  def dead_cell_evolution(live_cells)
-    dead_neighbor_set(live_cells).reduce(Set.new) do |set, cell|
-      case neighbor_count(cell, live_cells)
-      when 0..2
-        set
-      when 3
-        set.add cell
-      when 4..8
-        set
-      end
-    end
+  def live_cells_with_neighbor_counts(live_cells)
+    live_cells.map { |cell| {coords: cell, neighbor_count: neighbor_count(cell, live_cells)} }
+  end
+
+  def dead_cells_with_neighbor_counts(dead_cells, live_cells)
+    dead_cells.map { |cell| {coords: cell, neighbor_count: neighbor_count(cell, live_cells)} }
   end
 
   def neighboring_coords(coords)
