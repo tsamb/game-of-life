@@ -2,7 +2,13 @@ require 'set'
 
 class Life
   def next_gen(live_cells)
-    live_cell_evolution = live_cells.reduce(Set.new) do |set, cell|
+    live_cell_evolution(live_cells) + dead_cell_evolution(live_cells)
+  end
+
+  private
+
+  def live_cell_evolution(live_cells)
+    live_cells.reduce(Set.new) do |set, cell|
       case neighbor_count(cell, live_cells)
       when 0..1
         set
@@ -12,7 +18,10 @@ class Life
         set
       end
     end
-    dead_neighbor_set(live_cells).reduce(live_cell_evolution) do |set, cell|
+  end
+
+  def dead_cell_evolution(live_cells)
+    dead_neighbor_set(live_cells).reduce(Set.new) do |set, cell|
       case neighbor_count(cell, live_cells)
       when 0..2
         set
@@ -23,8 +32,6 @@ class Life
       end
     end
   end
-
-  private
 
   def neighboring_coords(coords)
     relative_neighbors = [-1,0,1].product([-1,0,1]) - [[0,0]]
