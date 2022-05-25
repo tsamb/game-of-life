@@ -1,6 +1,9 @@
 require 'set'
 
 class Life
+  ALIVE_STAYS_ALIVE_RANGE = 2..3
+  DEAD_BECOMES_ALIVE_RANGE = 3..3
+
   def next_gen(live_cells)
     live_cell_evolution(live_cells) + dead_cell_evolution(live_cells)
   end
@@ -8,11 +11,11 @@ class Life
   private
 
   def live_cell_evolution(live_cells)
-    evolve(live_cells_with_neighbor_counts(live_cells), 2..3)
+    evolve(live_cells_with_neighbor_counts(live_cells), ALIVE_STAYS_ALIVE_RANGE)
   end
 
   def dead_cell_evolution(live_cells)
-    evolve(dead_cells_with_neighbor_counts(dead_neighbor_set(live_cells), live_cells), 3..3)
+    evolve(dead_cells_with_neighbor_counts(dead_neighbor_set(live_cells), live_cells), DEAD_BECOMES_ALIVE_RANGE)
   end
 
   def evolve(cells_with_neighbors, alive_within_range)
