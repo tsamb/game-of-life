@@ -25,7 +25,7 @@ class Life
         set
       when alive_within_range
         set.add cell[:coords]
-      when alive_within_range.last+1..8
+      when alive_within_range.last+1..Float::INFINITY
         set
       end
     end
@@ -40,10 +40,15 @@ class Life
   end
 
   def neighboring_coords(coords)
-    relative_neighbors = [-1,0,1].product([-1,0,1]) - [[0,0]]
-    Set.new(relative_neighbors.map do |neighbor_coords|
+    Set.new(relative_neighbors(coords.length).map do |neighbor_coords|
       neighbor_coords.zip(coords).map(&:sum)
     end)
+  end
+
+  def relative_neighbors(dimensions)
+    (dimensions - 1).times.reduce([-1,0,1]) do |list|
+      list.product([-1,0,1]).map(&:flatten)
+    end - [Array.new(dimensions, 0)]
   end
 
   def dead_neighbor_set(live_cells)
